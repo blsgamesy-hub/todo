@@ -412,7 +412,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
     todos.push({id:idCounter++,text:text,cat:cat,priority:priority,done:false});
     input.value='';
     input.focus();
-    render();
+    render();autoSave();
   }
 
   // 목록 클릭
@@ -424,17 +424,17 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
     if(e.target.classList.contains('edit-priority-btn')){
       var newP=e.target.getAttribute('data-p');
       for(var i=0;i<todos.length;i++) if(todos[i].id===id){todos[i].priority=newP;break;}
-      render(); return;
+      render();autoSave(); return;
     }
     if(e.target.classList.contains('check-box')){
       for(var i=0;i<todos.length;i++) if(todos[i].id===id){todos[i].done=!todos[i].done;break;}
       if(editingId===id) editingId=null;
-      render(); return;
+      render();autoSave(); return;
     }
     if(e.target.classList.contains('delete-btn')){
       todos=todos.filter(function(t){return t.id!==id;});
       if(editingId===id) editingId=null;
-      render(); return;
+      render();autoSave(); return;
     }
     if(e.target.classList.contains('edit-btn')){
       editingId=(editingId===id)?null:id;
@@ -466,7 +466,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
       var id=parseInt(e.target.getAttribute('data-id'));
       var val=e.target.value.trim();
       if(val) for(var i=0;i<todos.length;i++) if(todos[i].id===id){todos[i].text=val;break;}
-      editingId=null; render();
+      editingId=null; render();autoSave();
     }
   },true);
 
@@ -531,6 +531,20 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
     document.getElementById('stats').textContent=todos.length>0?done+' / '+todos.length+' 완료':'';
   }
 
+  function autoSave(){
+    try{ localStorage.setItem('todo_data',JSON.stringify({cats:cats,todos:todos,idCounter:idCounter})); }catch(e){}
+  }
+  function autoLoad(){
+    try{
+      var raw=localStorage.getItem('todo_data');
+      if(!raw) return;
+      var data=JSON.parse(raw);
+      if(data.cats) cats=data.cats;
+      if(data.todos) todos=data.todos;
+      if(data.idCounter) idCounter=data.idCounter;
+    }catch(e){}
+  }
+
   function renderAll(){
     renderTabs(); renderCatSelect(); render();
     var p=document.getElementById('settings-panel');
@@ -541,6 +555,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  autoLoad();
   renderAll();
 })();
 </script>
