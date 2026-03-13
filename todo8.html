@@ -214,6 +214,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
     document.getElementById('title-display').textContent=val;
     this.style.display='none';
     document.getElementById('title-display').style.display='';
+    autoSave();
   });
   document.getElementById('title-input').addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key==='Escape') this.blur();
@@ -277,7 +278,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
       nameInputs[n].addEventListener('input',function(){
         var ci=parseInt(this.getAttribute('data-ci'));
         cats[ci].name=this.value;
-        renderTabs(); renderCatSelect();
+        renderTabs(); renderCatSelect(); autoSave();
       });
     }
     // 팔레트
@@ -287,7 +288,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
         var ci=parseInt(this.getAttribute('data-ci'));
         var pi=parseInt(this.getAttribute('data-pi'));
         cats[ci].palIdx=pi;
-        renderCatEditor(); renderTabs(); render();
+        renderCatEditor(); renderTabs(); render(); autoSave();
       });
     }
     // 삭제
@@ -298,7 +299,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
         var removed=cats[ci].name;
         cats.splice(ci,1);
         if(filter===removed) filter='전체';
-        renderCatEditor(); renderTabs(); renderCatSelect(); render();
+        renderCatEditor(); renderTabs(); renderCatSelect(); render(); autoSave();
       });
     }
     // 드래그 순서
@@ -323,7 +324,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
         var moved=cats.splice(dragSrcIdx,1)[0];
         cats.splice(targetIdx,0,moved);
         dragSrcIdx=null;
-        renderCatEditor(); renderTabs(); renderCatSelect(); render();
+        renderCatEditor(); renderTabs(); renderCatSelect(); render(); autoSave();
       });
     }
   }
@@ -331,7 +332,7 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
   // 카테고리 추가
   document.getElementById('add-cat-btn').addEventListener('click',function(){
     cats.push({name:'새카테고리',palIdx:Math.floor(Math.random()*PALETTE.length)});
-    renderCatEditor(); renderTabs(); renderCatSelect();
+    renderCatEditor(); renderTabs(); renderCatSelect(); autoSave();
   });
 
   function getCatColors(catName){
@@ -532,7 +533,8 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
   }
 
   function autoSave(){
-    try{ localStorage.setItem('todo_data',JSON.stringify({cats:cats,todos:todos,idCounter:idCounter})); }catch(e){}
+    var title=document.getElementById('title-display').textContent||'오늘의 할 일 ✏️';
+    try{ localStorage.setItem('todo_data',JSON.stringify({cats:cats,todos:todos,idCounter:idCounter,title:title})); }catch(e){}
   }
   function autoLoad(){
     try{
@@ -542,6 +544,10 @@ select{background:#fdf9f0;border:1px solid #d0c0a8;border-radius:4px;padding:2px
       if(data.cats) cats=data.cats;
       if(data.todos) todos=data.todos;
       if(data.idCounter) idCounter=data.idCounter;
+      if(data.title){
+        document.getElementById('title-display').textContent=data.title;
+        document.getElementById('title-input').value=data.title;
+      }
     }catch(e){}
   }
 
