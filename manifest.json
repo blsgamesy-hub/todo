@@ -1,0 +1,17 @@
+{
+  "name": "오늘의 할 일",
+  "short_name": "할 일",
+  "description": "나만의 투두리스트",
+  "start_url": "/todo/todo8.html",
+  "display": "standalone",
+  "background_color": "#e8e0d0",
+  "theme_color": "#5a4a3a",
+  "icons": [
+    {
+      "src": "icon_final.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
